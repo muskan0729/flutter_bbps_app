@@ -1,10 +1,43 @@
 import 'package:flutter/material.dart';
 import '../../widgets/app_footer.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../widgets/app_sidebar.dart'; // Import the AppSidebar
+import '../../widgets/app_sidebar.dart';
+import 'bbps_service_screen.dart';
+import '../../../data/services/category_service.dart';
 
-class BillsScreen extends StatelessWidget {
+class BillsScreen extends StatefulWidget {
   const BillsScreen({super.key});
+
+  @override
+  State<BillsScreen> createState() => _BillsScreenState();
+}
+
+class _BillsScreenState extends State<BillsScreen> {
+  final CategoryService _categoryService = CategoryService();
+
+  bool _isLoading = true;
+  List<String> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final response = await _categoryService.fetchUserCategories(userId: 3);
+
+    if (response != null && response.status) {
+      setState(() {
+        _categories = response.categories;
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,64 +47,73 @@ class BillsScreen extends StatelessWidget {
       /// 🔹 App Bar
       appBar: AppBar(
         title: const Text(
-          "Bills & Recharge",
+          "Amaan Bills",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 98, 134, 211),
         elevation: 0,
       ),
 
-      /// 🔹 Sidebar (Drawer)
-      drawer: const AppSidebar(), // Add the AppSidebar here for the sidebar navigation
+      /// 🔹 Sidebar
+      drawer: const AppSidebar(),
 
       /// 🔹 Body
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "All Services",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0033A0),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            /// 🔹 Services Grid Card
-            Container(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
-              decoration: _cardDecoration(),
-              child: GridView.count(
-                crossAxisCount: 4,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 12,
-                children: _services
-                    .map(
-                      (service) => _serviceTile(
-                        icon: service.icon,
-                        label: service.title,
-                        color: service.color,
-                        onTap: () {},
-                      ),
-                    )
-                    .toList(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "All Services",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0033A0),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// 🔹 Services Grid
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: _cardDecoration(),
+                    child: GridView.count(
+                      crossAxisCount: 4,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 12,
+                      children: _categories.map((category) {
+                        final meta = _categoryMeta(category);
+                        return _serviceTile(
+                          icon: meta.icon,
+                          label: category,
+                          color: meta.color,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    BbpsServiceScreen(serviceName: category),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
 
       /// 🔹 Footer
       bottomNavigationBar: const AppFooter(currentIndex: 1),
     );
   }
 
-  /// 🔹 Service Tile (same as Home)
+  /// 🔹 Service Tile
   Widget _serviceTile({
     required IconData icon,
     required String label,
@@ -84,22 +126,19 @@ class BillsScreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 52,
-            width: 52,
+            height: 30,
+            width: 30,
             decoration: BoxDecoration(
               color: color.withOpacity(0.12),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 26),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -120,46 +159,49 @@ class BillsScreen extends StatelessWidget {
       ],
     );
   }
+
+  /// 🔹 Category → Icon & Color Mapping
+  _CategoryMeta _categoryMeta(String category) {
+    const map = {
+      "Fastag": _CategoryMeta(Icons.directions_car, Colors.blueGrey),
+      "Donation": _CategoryMeta(Icons.volunteer_activism, Colors.pink),
+      "Cable TV": _CategoryMeta(Icons.tv, Colors.red),
+      "Agent Collection": _CategoryMeta(Icons.badge, Colors.indigo),
+      "Broadband Postpaid": _CategoryMeta(Icons.wifi, Colors.purple),
+      "Clubs and Associations": _CategoryMeta(Icons.groups, Colors.teal),
+      "Credit Card": _CategoryMeta(Icons.credit_card, Colors.green),
+      "DTH": _CategoryMeta(Icons.satellite_alt, Colors.deepOrange),
+      "eChallan": _CategoryMeta(Icons.receipt_long, Colors.brown),
+      "Education Fees": _CategoryMeta(Icons.school, Colors.blue),
+      "Electricity": _CategoryMeta(Icons.bolt, Colors.amber),
+      "EV Recharge": _CategoryMeta(Icons.battery_charging_full, Colors.green),
+      "Gas": _CategoryMeta(Icons.local_gas_station, Colors.deepOrange),
+      "Housing Society": _CategoryMeta(Icons.apartment, Colors.indigo),
+      "Insurance": _CategoryMeta(Icons.security, Colors.green),
+      "Landline Postpaid": _CategoryMeta(Icons.phone, Colors.blue),
+      "Loan Repayment": _CategoryMeta(Icons.account_balance, Colors.brown),
+      "LPG Gas": _CategoryMeta(Icons.fireplace, Colors.redAccent),
+      "Mobile Postpaid": _CategoryMeta(Icons.receipt, Colors.teal),
+      "Mobile Prepaid": _CategoryMeta(Icons.phone_android, Colors.orange),
+      "Municipal Services": _CategoryMeta(Icons.location_city, Colors.blueGrey),
+      "Municipal Taxes": _CategoryMeta(Icons.description, Colors.brown),
+      "National Pension System": _CategoryMeta(Icons.person, Colors.indigo),
+      "NCMC Recharge": _CategoryMeta(Icons.train, Colors.deepPurple),
+      "Prepaid Meter": _CategoryMeta(Icons.power, Colors.amber),
+      "Recurring Deposit": _CategoryMeta(Icons.savings, Colors.green),
+      "Rental": _CategoryMeta(Icons.house, Colors.blue),
+      "Subscription": _CategoryMeta(Icons.autorenew, Colors.purple),
+    };
+
+    return map[category] ??
+        const _CategoryMeta(Icons.receipt_long, Colors.grey);
+  }
 }
 
-//// 🔹 Service Model
-class _ServiceItem {
-  final String title;
+/// 🔹 Helper Class
+class _CategoryMeta {
   final IconData icon;
   final Color color;
 
-  const _ServiceItem(this.title, this.icon, this.color);
+  const _CategoryMeta(this.icon, this.color);
 }
-
-//// 🔹 ALL BBPS SERVICES (Mapped to Material Icons)
-const List<_ServiceItem> _services = [
-  _ServiceItem("Agent Collection", Icons.badge, Colors.indigo),
-  _ServiceItem("Broadband Postpaid", Icons.wifi, Colors.purple),
-  _ServiceItem("Cable TV", Icons.tv, Colors.red),
-  _ServiceItem("Clubs", Icons.groups, Colors.teal),
-  _ServiceItem("Credit Card", Icons.credit_card, Colors.green),
-  _ServiceItem("Donation", Icons.volunteer_activism, Colors.pink),
-  _ServiceItem("DTH", Icons.satellite_alt, Colors.deepOrange),
-  _ServiceItem("eChallan", Icons.receipt_long, Colors.brown),
-  _ServiceItem("Education Fees", Icons.school, Colors.blue),
-  _ServiceItem("Electricity", Icons.bolt, Colors.amber),
-  _ServiceItem("EV Recharge", Icons.battery_charging_full, Colors.green),
-  _ServiceItem("Fastag", Icons.directions_car, Colors.blueGrey),
-  _ServiceItem("Gas", Icons.local_gas_station, Colors.deepOrange),
-  _ServiceItem("Housing Society", Icons.apartment, Colors.indigo),
-  _ServiceItem("Insurance", Icons.security, Colors.green),
-  _ServiceItem("Landline Postpaid", Icons.phone, Colors.blue),
-  _ServiceItem("Loan Repayment", Icons.account_balance, Colors.brown),
-  _ServiceItem("LPG Gas", Icons.fireplace, Colors.redAccent),
-  _ServiceItem("Mobile Postpaid", Icons.receipt, Colors.teal),
-  _ServiceItem("Mobile Prepaid", Icons.phone_android, Colors.orange),
-  _ServiceItem("Municipal Services", Icons.location_city, Colors.blueGrey),
-  _ServiceItem("Municipal Taxes", Icons.description, Colors.brown),
-  _ServiceItem("NPS", Icons.person, Colors.indigo),
-  _ServiceItem("NCMC Recharge", Icons.train, Colors.deepPurple),
-  _ServiceItem("Prepaid Meter", Icons.power, Colors.amber),
-  _ServiceItem("Recurring Deposit", Icons.savings, Colors.green),
-  _ServiceItem("Rental", Icons.house, Colors.blue),
-  _ServiceItem("Subscription", Icons.autorenew, Colors.purple),
-  _ServiceItem("Water", Icons.water_drop, Colors.blue),
-];

@@ -172,20 +172,20 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 52,
-            width: 52,
+            height: 30,
+            width: 30,
             decoration: BoxDecoration(
               color: color.withOpacity(0.12),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 26),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 9,
               fontWeight: FontWeight.w600,
             ),
           ),

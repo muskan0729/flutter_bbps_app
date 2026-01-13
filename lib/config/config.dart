@@ -9,10 +9,16 @@ class ApiConfig {
 
   // Default headers for HTTP requests (optional)
   static Map<String, String> get defaultHeaders => {
-        'Content-Type': 'application/x-www-form-urlencoded', // for form data
-        'Accept': 'application/json',
-      };
+    'Content-Type': 'application/x-www-form-urlencoded', // for form data
+    'Accept': 'application/json',
+  };
 
+  // Auth headers with token
+  static Map<String, String> authHeaders(String token) => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token',
+  };
   // Timeout duration for HTTP requests (optional)
   static const Duration requestTimeout = Duration(seconds: 30);
 

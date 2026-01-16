@@ -152,9 +152,6 @@ final ComplaintService complaintService = ComplaintService();
 
           // Call the model-based service
           final response = await complaintService.registerComplaintModel(request);
-
-          print("API Response: $response"); // debug response
-
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Complaint submitted successfully!")),
           );
@@ -280,7 +277,7 @@ final ComplaintService complaintService = ComplaintService();
 
  Widget _dropdownField(String hint, List<String> items, String value, Function(String?) onChanged) {
   return DropdownButtonFormField<String>(
-    value: value.isEmpty ? null : value,
+    initialValue: value.isEmpty ? null : value,
     items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
     onChanged: onChanged,
     decoration: InputDecoration(

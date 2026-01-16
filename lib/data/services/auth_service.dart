@@ -1,5 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../config/config.dart';
 
@@ -21,7 +22,7 @@ class AuthService {
         throw Exception('Failed to send email OTP');
       }
     } catch (e) {
-      print("Error in sendEmailOtp: $e");
+      debugPrint("Error in sendEmailOtp: $e");
       rethrow;
     }
   }
@@ -43,7 +44,7 @@ class AuthService {
         throw Exception('Invalid OTP');
       }
     } catch (e) {
-      print("Error in verifyEmailOtp: $e");
+      debugPrint("Error in verifyEmailOtp: $e");
       rethrow;
     }
   }
@@ -65,13 +66,16 @@ class AuthService {
         throw Exception('Failed to send mobile OTP');
       }
     } catch (e) {
-      print("Error in sendMobileOtp: $e");
+      debugPrint("Error in sendMobileOtp: $e");
       rethrow;
     }
   }
 
   /// Verify Mobile OTP
-  Future<Map<String, dynamic>> verifyMobileOtp(String mobileNo, String otp) async {
+  Future<Map<String, dynamic>> verifyMobileOtp(
+    String mobileNo,
+    String otp,
+  ) async {
     try {
       final response = await http
           .post(
@@ -87,70 +91,80 @@ class AuthService {
         throw Exception('Invalid OTP');
       }
     } catch (e) {
-      print("Error in verifyMobileOtp: $e");
+      debugPrint("Error in verifyMobileOtp: $e");
       rethrow;
     }
   }
 
   /// Register User (password = mobile number)
- Future<Map<String, dynamic>> registerNew(String name, String email, String mobileNo) async {
-  try {
-    final response = await http
-        .post(
-          Uri.parse('${ApiConfig.baseUrl}/registernew'),
-          headers: ApiConfig.defaultHeaders,
-          body: {
-            'name': name,
-            'email': email,
-            'mobile_no': mobileNo,
-            'password': mobileNo.trim(),  // Ensure no extra spaces in password
-            'password_confirmation': mobileNo.trim(),  // Ensure confirm password matches
-          },
-        )
-        .timeout(ApiConfig.requestTimeout);
+  Future<Map<String, dynamic>> registerNew(
+    String name,
+    String email,
+    String mobileNo,
+  ) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('${ApiConfig.baseUrl}/registernew'),
+            headers: ApiConfig.defaultHeaders,
+            body: {
+              'name': name,
+              'email': email,
+              'mobile_no': mobileNo,
+              'password': mobileNo.trim(),
+              'password_confirmation': mobileNo.trim(),
+            },
+          )
+          .timeout(ApiConfig.requestTimeout);
 
-    print('REGISTER RESPONSE: ${response.body}');
+      debugPrint('REGISTER RESPONSE: ${response.body}');
 
-    // Check for 200 or 201 status code (successful registration)
-    if (response.statusCode == 201) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Register failed (${response.statusCode})');
+      if (response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Register failed (${response.statusCode})');
+      }
+    } catch (e) {
+      debugPrint("Error in registerNew: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Error in registerNew: $e");
-    rethrow;
   }
-}
-
-
 
   /// Login User
-  Future<Map<String, dynamic>> loginUser(String emailOrMobile, String password) async {
+  Future<Map<String, dynamic>> loginUser(
+    String emailOrMobile,
+    String password,
+  ) async {
     try {
       final response = await http
           .post(
             Uri.parse('${ApiConfig.baseUrl}/login'),
             headers: ApiConfig.defaultHeaders,
-            body: {
-              'email': emailOrMobile, // your API expects "email" field
-              'password': password,
-            },
+            body: {'email': emailOrMobile, 'password': password},
           )
           .timeout(ApiConfig.requestTimeout);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        // Save the token if login is successful
+        debugPrint(data.toString());
+        // Save token
         await saveToken(data['token']);
 
-        return data;  
+        // Save user info safely
+        await setProfileInfo({
+          "name": data['user']['name'],
+          "email": data['user']['email'],
+          "mobile": data['user']['mobile_no'],
+          "wallet_blance":data['user']['merchant_bbps_wallet'],
+        });
+
+        return data;
       } else {
         throw Exception('Login failed. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print("Error in loginUser: $e");
+      debugPrint("Error in loginUser: $e");
       rethrow;
     }
   }
@@ -161,7 +175,7 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', token);
     } catch (e) {
-      print("Error saving token: $e");
+      debugPrint("Error saving token: $e");
     }
   }
 
@@ -171,7 +185,7 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString('auth_token');
     } catch (e) {
-      print("Error retrieving token: $e");
+      debugPrint("Error retrieving token: $e");
       return null;
     }
   }
@@ -181,8 +195,75 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('auth_token');
+      await prefs.remove('user_info'); // Clear user info on logout
     } catch (e) {
-      print("Error deleting token: $e");
+      debugPrint("Error deleting token: $e");
+    }
+  }
+
+  /// Get Transactions
+  Future<List<Map<String, dynamic>>> getTransaction(int id) async {
+    try {
+      final str = await getToken();
+      final url = Uri.parse(
+        '${ApiConfig.baseUrl}/bbps/all-bill-payments/json?id=$id',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer ${str?.split('|')[1]}",
+        },
+      );
+
+      Map<String, dynamic> hf = await getUserInfo();
+      debugPrint(hf.toString());
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((item) => item as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Something went wrong: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('getTransaction error: $e');
+      rethrow;
+    }
+  }
+
+  /// Get User Info safely
+  Future<Map<String, dynamic>> getUserInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? info = prefs.getString('user_info');
+
+      if (info == null || info.trim().isEmpty || info == 'null') {
+        debugPrint('User info not found or invalid');
+        return {};
+      }
+
+      final decoded = jsonDecode(info);
+
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      } else {
+        debugPrint('User info format invalid');
+        return {};
+      }
+    } catch (e) {
+      debugPrint('Error decoding user info: $e');
+      return {};
+    }
+  }
+
+  /// Save user profile info safely
+  Future<void> setProfileInfo(Map<String, dynamic> userInfo) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_info', jsonEncode(userInfo));
+    } catch (e) {
+      debugPrint('Error saving user info: $e');
     }
   }
 }

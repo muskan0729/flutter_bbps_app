@@ -120,9 +120,6 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
                   complaintStatus = response;
                 });
 
-
-                  print("API Response: $response"); // debug response
-
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Complaint status checked!")),
                   );
@@ -215,7 +212,7 @@ rows: complaintStatus == null
   /// 🔹 Widgets
  Widget _dropdownField(String hint) {
   return DropdownButtonFormField<String>(
-    value: complaintType.isEmpty ? null : complaintType,
+    initialValue: complaintType.isEmpty ? null : complaintType,
     items: complaintTypes
         .map(
           (e) => DropdownMenuItem(

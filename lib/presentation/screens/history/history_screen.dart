@@ -37,7 +37,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       final allTransactions = await TransactionService().fetchTransactions();
 
       if (allTransactions.isEmpty) {
-        print('No transactions found. Loading dummy data.');
         await _loadDummyTransactions();
       } else {
         setState(() {
@@ -46,7 +45,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
         });
       }
     } catch (e) {
-      print('Error loading transactions: $e');
       await _loadDummyTransactions();
       setState(() {
         hasError = true; // Optional: indicate that API failed
@@ -65,7 +63,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       transactions = dummyTransactions;
       filteredTransactions = dummyTransactions;
     });
-    print('Dummy Data Loaded: $dummyTransactions');
   }
 
   // Filter transactions based on search query
@@ -78,7 +75,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
           .toList();
     });
 
-    print('Filtered Transactions: $filteredTransactions');
   }
 
   @override

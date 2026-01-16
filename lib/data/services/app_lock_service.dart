@@ -8,26 +8,34 @@ class AppLockService {
 
   final LocalAuthentication _auth = LocalAuthentication();
 
-  Future<bool> authenticate() async {
-    try {
-      // Check if device is capable of biometrics OR has a security PIN/Pattern
-      final bool canCheck = await _auth.canCheckBiometrics;
-      final bool isSupported = await _auth.isDeviceSupported();
+  bool _isAuthenticating = false; // 🚫 Prevent loop
 
-      if (!canCheck && !isSupported) {
+  /// Authenticate using device biometrics / passcode
+  Future<bool> authenticate() async {
+    if (_isAuthenticating) return true; // Prevent multiple calls
+    _isAuthenticating = true;
+
+    try {
+      final bool isSupported = await _auth.isDeviceSupported();
+      if (!isSupported) {
+        _isAuthenticating = false;
         return false;
       }
 
-      return await _auth.authenticate(
-        localizedReason: 'Please authenticate to access your account',
+      final result = await _auth.authenticate(
+        localizedReason: 'Authenticate to access your account',
         options: const AuthenticationOptions(
-          biometricOnly: false, // 🔑 If false, allows PIN/Pattern as backup
-          stickyAuth: true,     // Prevents auth from closing if user switches apps
-          useErrorDialogs: true, // Shows system dialogs for errors
+          biometricOnly: false,
+          stickyAuth: true,
+          useErrorDialogs: true,
         ),
       );
+
+      _isAuthenticating = false;
+      return result;
     } catch (e) {
-      debugPrint('Authentication error: $e');
+      _isAuthenticating = false;
+      debugPrint('OS Authentication error: $e');
       return false;
     }
   }

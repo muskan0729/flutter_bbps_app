@@ -5,7 +5,7 @@
 
 class ApiConfig {
   // Base URL for all API calls
-  static const String baseUrl = "http://bbps.spay.live/api";
+  static const String baseUrl = "https://bbps.spay.live/api";
 
   // Default headers for HTTP requests (optional)
   static Map<String, String> get defaultHeaders => {

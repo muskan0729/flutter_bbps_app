@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/utils/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/services/auth_service.dart';
+import '../../../data/services/app_lock_service.dart';
+import '../../../core/security/secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,9 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final result = await _authService.loginUser(emailOrMobile, password);
+
       if (result['token'] != null) {
-        // Navigate to home screen
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        _showEnableAppLockPopup();
       } else {
         throw Exception('Token not received');
       }
@@ -46,6 +48,48 @@ class _LoginScreenState extends State<LoginScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  /// Show popup to enable app lock
+  void _showEnableAppLockPopup() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Secure Your App"),
+          content: const Text(
+            "Enable device lock (Fingerprint / Face ID / PIN) to protect your account.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, AppRoutes.home);
+              },
+              child: const Text("Skip for now"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final success = await AppLockService().authenticate();
+                if (success) {
+                  await SecureStorage.setAppLockEnabled(true);
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, AppRoutes.home);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Authentication cancelled or failed"),
+                    ),
+                  );
+                }
+              },
+              child: const Text("Enable App Lock"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -65,7 +109,10 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset('assets/images/bharatconnect.png', height: 120),
+              Image.asset(
+                'assets/images/bharatconnect.png',
+                height: 120,
+              ),
               const SizedBox(height: 16),
               const Text(
                 "Welcome to BBPS App",
@@ -88,8 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -102,8 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -113,20 +162,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 27, 86, 173),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onPressed: _isLoading ? null : _handleLogin,
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Login",
-                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                      : const Text(
+                          "Login",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don’t have an account? ", style: TextStyle(fontSize: 13)),
+                  const Text(
+                    "Don’t have an account? ",
+                    style: TextStyle(fontSize: 13),
+                  ),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.register);
@@ -134,7 +189,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text(
                       "Register",
                       style: TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.bold, color: Colors.blue),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                 ],

@@ -1,0 +1,26 @@
+<?php
+error_reporting(-1);
+ini_set("display_errors", 1);
+
+// Provide your working key
+$working_key = '8812E716B1CE8327F43C4895DC0E0DB8';
+
+// Encrypted data
+$encrypted_data = 'ca7a624e0bbe2a3f4ab13cdacb8a8323010e494495174916291c9f677d73b84535cbd62eb353e0c23cc853ac6fe106a8828678ae4ad42f4828927d583a5c913e378d9a4c4900c4d011ef86acfb277d5f60b5dd3d389ec292dc77a126857b53b2b4a4fa7a14f413c43eea65e5db635c0a97f81b09420d510099293b97f3821324d2e263fff8ec783cf693bfae91e803c6ea02d7fa1ea5b3949e8319d0dce946f2cbd4b8fac18fc9a56a55c98400a319e8ac6981c75fb9c3cd7ae05eafb9c81a8c35c1f63c96655d79cc39a08784dd0983b25cb8d5dbf51906fce5fc88b49c0f74de9c73fed6da1a465106b172da99bdbf9a01b9feeb3bdca0c5957013e6d339e7ced94d4bd2a7fea7b917b553afa79b4aa2937044b50aac9a9e60426412cca1221a4198a68e1e4784324bc8295fe8b5222bd89e6395004a441932ac436ce2c669bc2bb19aad1d680105870b85b58ea431dfad7ef707013e0088682948a30713905db47b9955a4679fda2df5e2f572f404a2cb83f0c1e5789fa2c66952b69232aca5e1d0f797f12c46b00314abf585465591539866379e624cdb0aaf547f457ddb9f7b7f7a7f6e8c4d38757113cdf4633568ad279f8c00ad11bcfb840a359ac17d892ffc5bfef55f14d4e4ba05fb7e2ebe29a24a56bf0e36315d677ed2b553f08d448d2f425adf4a0b691276dd72498a6aad2033e9939bae20dc79df34c60d836aa5f909693143da772dc954f8309a70a4647fc62315507ae9b2996c88338f9bceec74a367d1bdf6b0b6176bd19694474bfc1d1be579e4a5cb6223c39652ec6fde15b45edc2d7e1c6431d51f111e3bd3f41aba57129b805475bcd84225521887656a71b871480df32de77c3ee700656a88acf06b792d617b019558293dedf041bd9b6625f98db137a26d7402982cb7ac03cefb198e122ef0e378eb76c89b29f5475cfd4a3ced6da58853f4b2be92e4af630ef9318cda3e259cb1818345081306ee6a74165d6ea8646a15005371dfb9f28edbaf3fb01b97e2def1ddad1ad2cdb13074c13ff11525e971ff1005a65950cc73313394dbfaf92e1395683281b92c3de5f5bc82b86631f411c4e7f4aad813e351159b8fb10510bd5113eef3e77414ca5a';
+
+// Decrypt the data
+$decrypted_data = decrypt($encrypted_data, $working_key);
+echo "Decrypted data: " . $decrypted_data;
+
+function decrypt($encryptedText, $key) {
+    $key = hextobin(md5($key));
+    $initVector = pack("C*", 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+    $encryptedText = hextobin($encryptedText);
+    $decryptedText = openssl_decrypt($encryptedText, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $initVector);
+    return $decryptedText;
+}
+
+function hextobin($hexString) {
+    return pack("H*", $hexString);
+}
+?>

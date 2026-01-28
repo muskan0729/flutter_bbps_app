@@ -2,12 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../config/config.dart';
 import '../models/service_category_model.dart';
+import 'auth_service.dart';
 
 class CategoryService {
-  Future<ServiceCategoryResponse?> fetchUserCategories({
-    required int userId,
-  }) async {
+  final AuthService _authService = AuthService();
+
+  Future<ServiceCategoryResponse?> fetchUserCategories() async {
     try {
+      final userId = await _authService.getUserId();
+
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
       final response = await http
           .get(
             Uri.parse('${ApiConfig.baseUrl}/user/$userId/categories'),

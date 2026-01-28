@@ -158,9 +158,12 @@ class AuthService {
           "mobile": data['user']['mobile_no'],
           "wallet_blance":data['user']['merchant_bbps_wallet'],
         });
+        // ✅ Save userId (from REAL API)
+        await saveUserId(data['user']['id']);
 
         return data;
       } else {
+        print(response.body);
         throw Exception('Login failed. Status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -265,5 +268,15 @@ class AuthService {
     } catch (e) {
       debugPrint('Error saving user info: $e');
     }
+  }
+
+  Future<void> saveUserId(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('user_id', userId);
+  }
+
+  Future<int?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id');
   }
 }

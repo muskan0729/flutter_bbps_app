@@ -71,7 +71,10 @@ class AuthService {
   }
 
   /// Verify Mobile OTP
-  Future<Map<String, dynamic>> verifyMobileOtp(String mobileNo, String otp) async {
+  Future<Map<String, dynamic>> verifyMobileOtp(
+    String mobileNo,
+    String otp,
+  ) async {
     try {
       final response = await http
           .post(
@@ -93,40 +96,46 @@ class AuthService {
   }
 
   /// Register User (password = mobile number)
- Future<Map<String, dynamic>> registerNew(String name, String email, String mobileNo) async {
-  try {
-    final response = await http
-        .post(
-          Uri.parse('${ApiConfig.baseUrl}/registernew'),
-          headers: ApiConfig.defaultHeaders,
-          body: {
-            'name': name,
-            'email': email,
-            'mobile_no': mobileNo,
-            'password': mobileNo.trim(),  // Ensure no extra spaces in password
-            'password_confirmation': mobileNo.trim(),  // Ensure confirm password matches
-          },
-        )
-        .timeout(ApiConfig.requestTimeout);
+  Future<Map<String, dynamic>> registerNew(
+    String name,
+    String email,
+    String mobileNo,
+  ) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('${ApiConfig.baseUrl}/registernew'),
+            headers: ApiConfig.defaultHeaders,
+            body: {
+              'name': name,
+              'email': email,
+              'mobile_no': mobileNo,
+              'password': mobileNo.trim(), // Ensure no extra spaces in password
+              'password_confirmation': mobileNo
+                  .trim(), // Ensure confirm password matches
+            },
+          )
+          .timeout(ApiConfig.requestTimeout);
 
-    print('REGISTER RESPONSE: ${response.body}');
+      print('REGISTER RESPONSE: ${response.body}');
 
-    // Check for 200 or 201 status code (successful registration)
-    if (response.statusCode == 201) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Register failed (${response.statusCode})');
+      // Check for 200 or 201 status code (successful registration)
+      if (response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Register failed (${response.statusCode})');
+      }
+    } catch (e) {
+      print("Error in registerNew: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Error in registerNew: $e");
-    rethrow;
   }
-}
-
-
 
   /// Login User
-  Future<Map<String, dynamic>> loginUser(String emailOrMobile, String password) async {
+  Future<Map<String, dynamic>> loginUser(
+    String emailOrMobile,
+    String password,
+  ) async {
     try {
       final response = await http
           .post(
@@ -144,9 +153,12 @@ class AuthService {
 
         // Save the token if login is successful
         await saveToken(data['token']);
+        // ✅ Save userId (from REAL API)
+        await saveUserId(data['user']['id']);
 
-        return data;  
+        return data;
       } else {
+        print(response.body);
         throw Exception('Login failed. Status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -184,5 +196,15 @@ class AuthService {
     } catch (e) {
       print("Error deleting token: $e");
     }
+  }
+
+  Future<void> saveUserId(int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('user_id', userId);
+  }
+
+  Future<int?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('user_id');
   }
 }

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../config/config.dart';
 import '../models/biller_model.dart';
 import 'auth_service.dart';
+import '../models/biller_info_model.dart';
 
 class BillerService {
   final AuthService _authService = AuthService();
@@ -40,5 +41,22 @@ class BillerService {
       debugPrint('Biller API Error: $e');
       return [];
     }
+  }
+
+  Future<BillerInfoModel?> getBillerInfo(String billerId) async {
+    final token = await _authService.getToken();
+    if (token == null || token.isEmpty) return null;
+
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/bbps/biller-info/json'),
+      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'text/plain'},
+      body: billerId,
+    );
+
+    if (response.statusCode == 200) {
+      print('BillerInfo Body: ${response.body}');
+      return BillerInfoModel.fromJson(json.decode(response.body));
+    }
+    return null;
   }
 }

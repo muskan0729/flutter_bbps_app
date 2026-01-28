@@ -25,7 +25,7 @@ class _BillsScreenState extends State<BillsScreen> {
   }
 
   Future<void> _loadCategories() async {
-    final response = await _categoryService.fetchUserCategories(userId: 3);
+    final response = await _categoryService.fetchUserCategories();
 
     if (response != null && response.status) {
       setState(() {

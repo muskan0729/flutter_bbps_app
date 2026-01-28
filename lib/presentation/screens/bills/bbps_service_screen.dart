@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/biller_model.dart';
 import '../../../data/services/biller_service.dart';
+import 'biller_info_screen.dart';
 
 class BbpsServiceScreen extends StatefulWidget {
   final String serviceName;
@@ -53,10 +54,19 @@ class _BbpsServiceScreenState extends State<BbpsServiceScreen> {
                   child: ListTile(
                     leading: const Icon(Icons.account_balance),
                     title: Text(biller.blrName),
-                    // subtitle: Text(biller.blrId),
+                    subtitle: Text(biller.blrId),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
-                      // next step: bill fetch / payment
+                      print('Selected Biller: ${biller.blrName}');
+                      print('Biller ID: ${biller.blrId}');
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              BillerInfoScreen(billerId: biller.blrId),
+                        ),
+                      );
                     },
                   ),
                 );

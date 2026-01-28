@@ -11,6 +11,7 @@ import '../../presentation/screens/report/report_screen.dart';
 import '../../presentation/screens/support/support_screen.dart';
 import '../../presentation/screens/complaint/complaint_screen.dart';
 import '../../presentation/screens/check_complaint/check_complaint_screen.dart';
+import '../../presentation/screens/more_tab/moreScreens.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -38,5 +39,6 @@ class AppRoutes {
     support: (_) => const SupportScreen(),
     complaint: (_) => const ComplaintScreen(),
     checkComplaint: (_) => const CheckComplaintScreen(),
+    more:(_)=>const Morescreens(),
   };
 }

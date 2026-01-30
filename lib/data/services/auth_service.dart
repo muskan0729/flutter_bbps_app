@@ -147,7 +147,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        debugPrint(data.toString());
+        // debugPrint(data.toString());
         // Save token
         await saveToken(data['token']);
 
@@ -163,7 +163,7 @@ class AuthService {
 
         return data;
       } else {
-        print(response.body);
+        // print(response.body);
         throw Exception('Login failed. Status code: ${response.statusCode}');
       }
     } catch (e) {
@@ -221,7 +221,7 @@ class AuthService {
       );
 
       Map<String, dynamic> hf = await getUserInfo();
-      debugPrint(hf.toString());
+      // debugPrint(hf.toString());
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);

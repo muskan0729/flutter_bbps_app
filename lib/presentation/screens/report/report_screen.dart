@@ -39,7 +39,24 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(title: const Text('Report')),
+      // appBar: AppBar(title: const Text('Report')),
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text(
+          "Report",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0033A0), Color(0xFF4B7BEC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
+
       drawer: const AppSidebar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -144,6 +161,7 @@ class _ReportScreenState extends State<ReportScreen> {
         if (!_initialized) {
           apiData = snapshot.data!;
           displayData = List.from(apiData);
+          print(displayData);
           _initialized = true;
         }
 
@@ -163,13 +181,14 @@ class _ReportScreenState extends State<ReportScreen> {
                   id: element['request_id'] ?? 'N/A',
                   title: element['category'] ?? 'N/A',
                   subtitle: element['blr_id'] ?? 'N/A',
-                  amount: '₹${element['respAmount'] ?? '0'}',
+                  amount: '₹${((num.tryParse(element['respAmount']?.toString() ?? '0') ?? 0) / 100).toStringAsFixed(2)}',
                   date: element['created_at'] != null
                       ? _formatDate(DateTime.parse(element['created_at']))
                       : '',
                   isCredit: element['txnStatus'] == '000',
                 );
               }),
+
             ],
           ),
         );

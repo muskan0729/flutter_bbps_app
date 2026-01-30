@@ -47,7 +47,8 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
     super.initState();
 
     // ✅ Prefill amount from bill-fetch
-    _amountController.text = widget.defaultAmount.toString();
+    final displayAmount = (widget.defaultAmount / 100).toStringAsFixed(2);
+    _amountController.text = displayAmount;
   }
 
   Map<String, dynamic> getData() {

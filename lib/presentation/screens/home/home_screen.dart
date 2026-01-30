@@ -4,7 +4,7 @@ import '../../widgets/action_button.dart';
 import '../../widgets/app_footer.dart';
 import '../../../core/utils/app_routes.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../widgets/app_sidebar.dart';  // Import the AppSidebar (sidebar)
+import '../../widgets/app_sidebar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,79 +14,105 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      /// 🔹 App Bar
+      /// 🔹 Modern AppBar
       appBar: AppBar(
+        elevation: 0,
         title: const Text(
-          "BBPS App",
+          "Spay Wallet",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color.fromARGB(255, 98, 134, 211),
-        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0033A0), Color(0xFF4B7BEC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
 
-      /// 🔹 Sidebar (Drawer)
-      drawer: const AppSidebar(),  // Add AppSidebar here for the sidebar navigation
+      /// 🔹 Sidebar
+      drawer: const AppSidebar(),
 
-      /// 🔹 Page Body
+      /// 🔹 Body
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
 
-            /// 🔹 Balance Card
+            /// 🔹 Wallet Balance (Hero Card)
             Container(
               padding: const EdgeInsets.all(24),
-              decoration: _cardDecoration(),
+              decoration: _balanceCardDecoration(),
               child: const BalanceCard(),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 28),
 
-            /// 🔹 Top Actions
+            /// 🔹 Quick Actions
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ActionButton(
-                  icon: Icons.send,
-                  label: "Send",
-                  iconColor: const Color(0xFFFF6600),
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.sendMoney),
+                Expanded(
+                  child: ActionButton(
+                    icon: Icons.send,
+                    label: "Send",
+                    iconColor: Colors.deepOrange,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.sendMoney),
+                  ),
                 ),
-                ActionButton(
-                  icon: Icons.history,
-                  label: "History",
-                  iconColor: const Color(0xFF0033A0),
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.history),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ActionButton(
+                    icon: Icons.history,
+                    label: "History",
+                    iconColor: Colors.indigo,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.history),
+                  ),
                 ),
-                ActionButton(
-                  icon: Icons.person,
-                  label: "Profile",
-                  iconColor: Colors.grey,
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.profile),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ActionButton(
+                    icon: Icons.person,
+                    label: "Profile",
+                    iconColor: Colors.grey,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.profile),
+                  ),
                 ),
               ],
             ),
 
             const SizedBox(height: 32),
 
-            /// 🔹 Services Title
-            const Text(
-              "Services",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0033A0),
-              ),
+            /// 🔹 Services Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  "Services",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  "View all",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
 
-            /// 🔹 Services Grid Card
+            /// 🔹 Services Grid
             Container(
               padding: const EdgeInsets.all(16),
               decoration: _cardDecoration(),
@@ -150,16 +176,33 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 24),
+
+            /// 🔹 Trust Badge
+            Row(
+              children: const [
+                Icon(Icons.lock, size: 16, color: Colors.grey),
+                SizedBox(width: 6),
+                Text(
+                  "Wallet secured with encryption",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
 
-      /// 🔹 FOOTER (Bottom Navigation)
+      /// 🔹 Bottom Navigation
       bottomNavigationBar: const AppFooter(currentIndex: 0),
     );
   }
 
-  /// 🔹 Service Tile Widget
+  /// 🔹 Service Tile
   Widget _serviceTile({
     required IconData icon,
     required String label,
@@ -168,24 +211,24 @@ class HomeScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       child: Column(
         children: [
           Container(
-            height: 30,
-            width: 30,
+            height: 48,
+            width: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(14),
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 9,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -194,16 +237,38 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// 🔹 Common Card Decoration
+  /// 🔹 Normal Card Decoration (Material 3)
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.08),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  /// 🔹 Balance Card Decoration (Premium)
+  BoxDecoration _balanceCardDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(24),
+      gradient: const LinearGradient(
+        colors: [
+          Color(0xFF0033A0),
+          Color(0xFF1E5EFF),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.blue.withOpacity(0.25),
+          blurRadius: 20,
+          offset: const Offset(0, 10),
         ),
       ],
     );

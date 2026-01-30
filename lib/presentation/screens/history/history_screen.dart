@@ -84,14 +84,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       // App Bar
       appBar: AppBar(
+        elevation: 0,
         title: const Text(
           "Transactions",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color.fromARGB(255, 98, 134, 211),
-        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0033A0), Color(0xFF4B7BEC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
-
       // Sidebar Drawer
       drawer: const AppSidebar(),
 

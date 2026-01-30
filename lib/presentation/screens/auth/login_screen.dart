@@ -62,13 +62,13 @@ class _LoginScreenState extends State<LoginScreen> {
             "Enable device lock (Fingerprint / Face ID / PIN) to protect your account.",
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, AppRoutes.home);
-              },
-              child: const Text("Skip for now"),
-            ),
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //     Navigator.pushReplacementNamed(context, AppRoutes.home);
+            //   },
+            //   child: const Text("Skip for now"),
+            // ),
             ElevatedButton(
               onPressed: () async {
                 final success = await AppLockService().authenticate();
@@ -110,8 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Image.asset(
-                'assets/images/bharatconnect.png',
-                height: 120,
+                'assets/images/bharatconnect.jpg',
+                height: 90,
               ),
               const SizedBox(height: 16),
               const Text(
@@ -198,11 +198,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const Text(
-                "By continuing, you agree to our Terms & Privacy Policy",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.black54),
-              ),
+              // const Text(
+              //   "By continuing, you agree to our Terms & Privacy Policy",
+              //   textAlign: TextAlign.center,
+              //   style: TextStyle(fontSize: 12, color: Colors.black54),
+              // ),
             ],
           ),
         ),

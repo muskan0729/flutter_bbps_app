@@ -29,8 +29,20 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
-        title: const Text('Check Complaint'),
-        backgroundColor: Colors.blue,
+        elevation: 0,
+        title: const Text(
+          "Check Complaint",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0033A0), Color(0xFF4B7BEC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       drawer: const AppSidebar(),
 

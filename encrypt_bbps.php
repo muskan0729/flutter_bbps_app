@@ -5,7 +5,7 @@ error_reporting(-1);
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 // Provide working key share by CCAvenues
-$working_key = '48A3144053CF2B0A357C6E44081FD781';
+$working_key = '75FC4C28834C28B8ED86C8F84D18D2B4';
 
 
 $merchant_data= 'PAST THE XML CODE HERE TO ENCRYPT';

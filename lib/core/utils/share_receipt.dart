@@ -3,6 +3,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
+
 class ShareReceipt {
   Future<void> shareTransaction({
     required ScreenshotController screenshotController,

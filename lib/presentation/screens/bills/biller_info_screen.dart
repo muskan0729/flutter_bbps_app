@@ -22,6 +22,7 @@ class _BillerInfoScreenState extends State<BillerInfoScreen> {
   final BillProcessService _billProcessService = BillProcessService();
   final _customerFormKey = GlobalKey<CustomerDetailsFormState>();
   final _billerFormKey = GlobalKey<BillerDynamicFormState>();
+
   bool get _shouldShowCustomerForm {
     final requirement = _billerInfo?.biller.billerFetchRequiremet.toUpperCase();
 
@@ -92,7 +93,8 @@ class _BillerInfoScreenState extends State<BillerInfoScreen> {
 
       if (response['status'] == true && responseCode == '000') {
         if (!mounted) return;
-
+        print('Data sent to PaymentScreen: Biller info  \n $_billerInfo ,');
+        debugPrint(' biller response  \n $response.toString() biller process\n,$billProcessResult ,\n cust data $customerData');
         Navigator.push(
           context,
           MaterialPageRoute(

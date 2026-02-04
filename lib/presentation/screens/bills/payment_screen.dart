@@ -3,6 +3,8 @@ import '../../../data/models/biller_info_model.dart';
 import '../../widgets/bills/bill_process_response_view.dart';
 import '../../widgets/bills/payment_request_form.dart';
 import '../../../data/models/bbps/bill_process/bill_process_result.dart';
+import '../../../data/services/bill_payment_service.dart';
+import 'payment_success_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final BillerInfoModel billerInfo;
@@ -26,6 +28,7 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   final _paymentKey = GlobalKey<PaymentRequestFormState>();
+  BillProcessService billProcessService = BillProcessService();
 
   bool get _requireCustomerDetails {
     return widget.billerInfo.biller.billerFetchRequiremet.toUpperCase() ==
@@ -63,10 +66,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
   // }
 
   void _onProceed() {
+    // print(billProcessResponse.toString());
     final form = _paymentKey.currentState;
+    debugPrint("This is Form Data");
+    // debugPrint(form.getData().toString());
     if (form == null || !form.validate()) return;
 
     final paymentData = form.getData();
+    debugPrint('thuhsujt $paymentData.toString()');
 
     /// 🔑 Decide customer source
     final Map<String, dynamic> customerData =
@@ -92,14 +99,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
       'remarks': paymentData['remarks'],
 
       /// amount
-      'amount': paymentData['amount'],
+      'amount': paymentData['amount'] > 0 ? 0 : paymentData['amount'],
     };
 
     /// remove empty values
     payload.removeWhere((_, v) => v == null || v.toString().isEmpty);
-
+    // print("BHBHBHBHHHBHBHBHBHBHHHHHBHBHBHBHBHHUHUHUHUHUHUHUHUHUHOSOSOSOSOSMDMDMD");
     debugPrint('📤 FINAL API PAYLOAD');
+    debugPrint(payload['amount'].toString());
     debugPrint(payload.toString());
+    // debugPrint(_paymentKey.toString());
+
+    debugPrint('API CALL');
+
+    Future<void> payBill() async {
+      final res = await billProcessService.processPayment(payload);
+      print(res);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentSuccessScreen(response: res),
+        ),
+      );
+    }
+
+    payBill();
   }
 
   @override
@@ -107,7 +131,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Payment')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

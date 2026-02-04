@@ -28,7 +28,7 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
   final _amountController = TextEditingController();
   final _remarksController = TextEditingController();
 
-  String _paymentMode = 'Cash';
+  String _paymentMode = 'CASH';
   bool _quickPay = false;
   bool _splitPay = false;
 
@@ -46,7 +46,6 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
   void initState() {
     super.initState();
 
-    // ✅ Prefill amount from bill-fetch
     final displayAmount = (widget.defaultAmount / 100).toStringAsFixed(2);
     _amountController.text = displayAmount;
   }
@@ -55,24 +54,25 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
     final data = <String, dynamic>{
       'remitterName': _remitterController.text,
       'paymentMode': _paymentMode,
-      'quickPay': _quickPay ? 'Y' : 'N',
-      'splitPay': _splitPay ? 'Y' : 'N',
-      'amount': int.tryParse(_amountController.text) ?? 0,
+      "quickPay": "N",
+      "splitPay": "N",
+      // 'quickPay': _quickPay ? 'Y' : 'N',
+      // 'splitPay': _splitPay ? 'Y' : 'N',
+      'amount': (double.tryParse(_amountController.text) ?? 0).toInt()*100,
       'remarks': _remarksController.text,
     };
 
     if (widget.requireCustomerDetails) {
       data['customerDetails'] = customerKey.currentState?.getData() ?? {};
     }
-
+    debugPrint('data from req pay');
+    debugPrint(_amountController.text);
+    debugPrint(data.toString());
     return data;
   }
 
   @override
   Widget build(BuildContext context) {
-    final paymentModes =
-        widget.billerInfo.biller.billerPaymentModes.paymentModeList;
-
     return Form(
       key: formKey,
       child: Column(
@@ -96,20 +96,14 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
           TextFormField(
             controller: _amountController,
             keyboardType: TextInputType.number,
-
-            /// 🔒 LOCK when NOT adhoc
             enabled: widget.isAdhocBiller,
-
             validator: (v) {
               if (v == null || v.isEmpty) return 'Amount required';
               return null;
             },
-
             decoration: InputDecoration(
               labelText: 'Amount',
               border: const OutlineInputBorder(),
-
-              /// UX hint
               suffixIcon: widget.isAdhocBiller
                   ? const Icon(Icons.edit)
                   : const Icon(Icons.lock),
@@ -118,33 +112,23 @@ class PaymentRequestFormState extends State<PaymentRequestForm> {
 
           const SizedBox(height: 12),
 
+          /// ✅ ONLY ONE PAYMENT MODE: CASH
           DropdownButtonFormField<String>(
-            value: _paymentMode,
+            value: 'CASH',
             decoration: const InputDecoration(
               labelText: 'Payment Mode',
               border: OutlineInputBorder(),
             ),
-            items: paymentModes
-                .map(
-                  (e) => DropdownMenuItem(
-                    value: e.paymentModeName,
-                    child: Text(e.paymentModeName),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) => setState(() => _paymentMode = v ?? 'Cash'),
+            items: const [
+              DropdownMenuItem(
+                value: 'CASH',
+                child: Text('CASH'),
+              ),
+            ],
+            onChanged: (_) {},
           ),
 
-          SwitchListTile(
-            title: const Text('Quick Pay'),
-            value: _quickPay,
-            onChanged: (v) => setState(() => _quickPay = v),
-          ),
-          SwitchListTile(
-            title: const Text('Split Pay'),
-            value: _splitPay,
-            onChanged: (v) => setState(() => _splitPay = v),
-          ),
+          const SizedBox(height: 12),
 
           TextFormField(
             controller: _remarksController,

@@ -184,6 +184,7 @@ class _BillsScreenState extends State<BillsScreen> {
       "Electricity": _CategoryMeta(Icons.bolt, Colors.amber),
       "EV Recharge": _CategoryMeta(Icons.battery_charging_full, Colors.green),
       "Gas": _CategoryMeta(Icons.local_gas_station, Colors.deepOrange),
+      // "LPG Gas": _CategoryMeta(Icons.home, Colors.deepOrange),
       "Housing Society": _CategoryMeta(Icons.apartment, Colors.indigo),
       "Insurance": _CategoryMeta(Icons.security, Colors.green),
       "Landline Postpaid": _CategoryMeta(Icons.phone, Colors.blue),

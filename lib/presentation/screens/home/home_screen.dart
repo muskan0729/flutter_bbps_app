@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
 
             /// 🔹 Services Grid
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: _cardDecoration(),
               child: GridView.count(
                 crossAxisCount: 4,

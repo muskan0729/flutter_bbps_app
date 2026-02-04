@@ -28,8 +28,9 @@ class BillProcessService {
         },
         body: jsonEncode(payload),
       );
-
+    print(response.toString());
       if (response.statusCode == 200) {
+        // print(response.body.toString());
         return json.decode(response.body);
       } else {
         // 🔑 Extract real BBPS error message
@@ -46,7 +47,8 @@ class BillProcessService {
           } else if (body['result']?['message'] != null) {
             message = body['result']['message'];
           }
-        } catch (_) {
+        } catch (err) {
+          print(err);
           // ignore parsing issues, fallback to default
         }
 

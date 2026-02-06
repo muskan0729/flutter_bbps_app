@@ -33,8 +33,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             0) /
             100;
 
-    inputParams =
-    List<Map<String, dynamic>>.from(
+    inputParams = List<Map<String, dynamic>>.from(
       paymentResponse['inputParams']?['input'] ?? [],
     );
   }
@@ -75,132 +74,145 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
           ),
         ],
       ),
-      body: Screenshot(
-        controller: screenshotController,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Success Icon
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.green,
-                ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 50,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              const Text(
-                'Payment Completed',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              Text(
-                '₹ ${amount.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Details Card
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 3,
-                child: Padding(
+      body: Column(
+        children: [
+          /// ✅ Screenshot Area (WHITE background)
+          Expanded(
+            child: Screenshot(
+              controller: screenshotController,
+              child: Container(
+                color: Colors.white, // <-- important
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      _row('Status', paymentResponse['responseReason']),
-                      _row(
-                        'Customer Name',
-                        paymentResponse['respCustomerName'],
-                      ),
-                      _row(
-                        'Transaction ID',
-                        paymentResponse['txnRefId'],
-                      ),
-                      _row(
-                        'Approval Ref No',
-                        paymentResponse['approvalRefNumber'],
-                      ),
-
-                      if (paymentResponse['respBillDate'] != null &&
-                          paymentResponse['respBillDate']
-                              .toString()
-                              .isNotEmpty)
-                        _row(
-                          'Bill Date',
-                          paymentResponse['respBillDate'],
+                      // Success Icon
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.green,
                         ),
-
-                      if (paymentResponse['respDueDate'] != null &&
-                          paymentResponse['respDueDate']
-                              .toString()
-                              .isNotEmpty)
-                        _row(
-                          'Due Date',
-                          paymentResponse['respDueDate'],
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 50,
                         ),
+                      ),
 
-                      if (inputParams.isNotEmpty) const Divider(),
+                      const SizedBox(height: 12),
 
-                      ...inputParams.map(
-                            (item) => _row(
-                          item['paramName']?.toString() ?? 'N/A',
-                          item['paramValue'],
+                      const Text(
+                        'Payment Completed',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        '₹ ${amount.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Details Card
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              _row(
+                                  'Status',
+                                  paymentResponse['responseReason']),
+                              _row(
+                                  'Customer Name',
+                                  paymentResponse[
+                                  'respCustomerName']),
+                              _row(
+                                  'Transaction ID',
+                                  paymentResponse['txnRefId']),
+                              _row(
+                                  'Approval Ref No',
+                                  paymentResponse[
+                                  'approvalRefNumber']),
+                              if (paymentResponse['respBillDate'] !=
+                                  null &&
+                                  paymentResponse['respBillDate']
+                                      .toString()
+                                      .isNotEmpty)
+                                _row(
+                                  'Bill Date',
+                                  paymentResponse['respBillDate'],
+                                ),
+                              if (paymentResponse['respDueDate'] !=
+                                  null &&
+                                  paymentResponse['respDueDate']
+                                      .toString()
+                                      .isNotEmpty)
+                                _row(
+                                  'Due Date',
+                                  paymentResponse['respDueDate'],
+                                ),
+                              if (inputParams.isNotEmpty)
+                                const Divider(),
+                              ...inputParams.map(
+                                    (item) => _row(
+                                  item['paramName']
+                                      ?.toString() ??
+                                      'N/A',
+                                  item['paramValue'],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+            ),
+          ),
 
-              const SizedBox(height: 24),
-
-              // Done Button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+          /// ❌ Not part of screenshot
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Done',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
+                child: const Text(
+                  'Done',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

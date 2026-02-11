@@ -187,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(
                 children: [
-                  Image.asset('assets/images/bharatconnect.png', height: 90),
+                  Image.asset('assets/images/logo_app_icon.png', height: 90),
                   const SizedBox(height: 16),
                   const Text(
                     "Create Account",

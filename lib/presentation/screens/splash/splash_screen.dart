@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/bharatconnect.png',
+              'assets/images/logo_app_icon.png',
               height: 120,
             ),
             const SizedBox(height: 20),

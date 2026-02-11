@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Image.asset(
-                'assets/images/bharatconnect.jpg',
+                'assets/images/logo_app_icon.png',
                 height: 90,
               ),
               const SizedBox(height: 16),
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                "Login using mobile/email and password",
+                "Login using mobile/email and password \n (ak@gmail.com)(9284210056)",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.person),
-                  hintText: "Mobile Number or Email",
+                  hintText: "Email",
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(

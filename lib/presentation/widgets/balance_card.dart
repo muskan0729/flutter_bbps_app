@@ -3,78 +3,138 @@ import 'package:flutter/material.dart';
 class BalanceCard extends StatelessWidget {
   const BalanceCard({super.key});
 
+  static const Color _primary = Color(0xFF0033A0);
+  static const Color _secondary = Color(0xFF1E5EFF);
+  static const Color _lightBlue = Color(0xFF4B7BEC);
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white, // White card
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+
+        /// ✅ Premium Gradient Background
+        gradient: const LinearGradient(
+          colors: [_primary, _secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+
+        /// Soft Glow Shadow
+        boxShadow: [
+          BoxShadow(
+            color: _secondary.withOpacity(0.35),
+            blurRadius: 25,
+            offset: const Offset(0, 14),
           ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
+        ],
+      ),
+      child: Stack(
+        children: [
+          /// Decorative Light Circle (premium feel)
+          // Positioned(
+          //   top: -40,
+          //   right: -40,
+          //   child: Container(
+          //     height: 140,
+          //     width: 140,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.white.withOpacity(0.08),
+          //     ),
+          //   ),
+          // ),
+
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
+              /// 🔹 Top Row
+              Row(
+                children: [
+                  const Text(
+                    "Available Balance",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Spacer(),
+
+                  /// Small Verified Badge
+             
+                ],
+              ),
+
+              const SizedBox(height: 18),
+
+              /// 🔹 Balance Amount
               const Text(
-                "Available Balance",
+                "₹12,450.00",
                 style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 16,
+                  fontSize: 34,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 8),
+
+              const SizedBox(height: 4),
+
               const Text(
-                "\$12,450.00",
+                "Updated just now",
                 style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Colors.white70,
                 ),
               ),
+
               const SizedBox(height: 24),
+
+              /// Soft Divider
+              Container(
+                height: 1,
+                color: Colors.white.withOpacity(0.15),
+              ),
+
+              const SizedBox(height: 18),
+
+              /// 🔹 Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children: const [
                   _CardButton(
-                    icon: Icons.add,
-                    label: "Add Money",
-                    onTap: () {},
+                    icon: Icons.add_rounded,
+                    label: "Add",
                   ),
                   _CardButton(
-                    icon: Icons.send,
+                    icon: Icons.send_rounded,
                     label: "Pay",
-                    onTap: () {},
                   ),
                   _CardButton(
-                    icon: Icons.receipt_long,
+                    icon: Icons.receipt_long_rounded,
                     label: "Statement",
-                    onTap: () {},
                   ),
                 ],
               ),
             ],
           ),
-        ),
-        // Logo top-right
-        Positioned(
-          top: 16,
-          right: 16,
-          child: Image.asset(
-            'assets/images/bharatconnect.png', // blue + orange logo
-            height: 40,
-            width: 40,
+
+          /// 🔹 Logo (top right)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Opacity(
+              opacity: 0.95,
+              child: Image.asset(
+                'assets/images/bharatconnect.png',
+                height: 40,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -82,40 +142,39 @@ class BalanceCard extends StatelessWidget {
 class _CardButton extends StatelessWidget {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
 
   const _CardButton({
     required this.icon,
     required this.label,
-    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Icon(
-              icon,
-              color: Colors.black87,
-              size: 24,
-            ),
+    return Column(
+      children: [
+        Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(16),
           ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 24,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
   }
 }

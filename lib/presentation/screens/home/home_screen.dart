@@ -9,28 +9,50 @@ import '../../widgets/app_sidebar.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  static const Color _primary = Color(0xFF0033A0);
+  static const Color _secondary = Color(0xFF1E5EFF);
+  static const Color _lightBlue = Color(0xFF4B7BEC);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
 
       /// 🔹 Modern AppBar
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text(
-          "Spay Wallet",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF0033A0), Color(0xFF4B7BEC)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+    appBar: AppBar(
+  elevation: 0,
+  title: const Text(
+    "Spay Wallet",
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+
+  /// ✅ Gradient Background
+  flexibleSpace: Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: [_primary, _lightBlue],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+  ),
+
+  /// ✅ Logo on Right Corner
+  actions: [
+    Padding(
+      padding: const EdgeInsets.only(right: 16),
+      child: Center(
+        child: Image.asset(
+          "assets/images/logo_app_icon_white.png",
+          height: 40,
         ),
       ),
+    ),
+  ],
+),
 
       /// 🔹 Sidebar
       drawer: const AppSidebar(),
@@ -52,59 +74,36 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            /// 🔹 Quick Actions
-            Row(
-              children: [
-                Expanded(
-                  child: ActionButton(
-                    icon: Icons.send,
-                    label: "Send",
-                    iconColor: Colors.deepOrange,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.sendMoney),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ActionButton(
-                    icon: Icons.history,
-                    label: "History",
-                    iconColor: Colors.indigo,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.history),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ActionButton(
-                    icon: Icons.person,
-                    label: "Profile",
-                    iconColor: Colors.grey,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.profile),
-                  ),
-                ),
-              ],
-            ),
-
+      
             const SizedBox(height: 32),
 
             /// 🔹 Services Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   "Services",
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
+                    color: _primary,
                   ),
                 ),
-                Text(
-                  "View all",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.w500,
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.bills),
+                  borderRadius: BorderRadius.circular(10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      "View all",
+                      style: TextStyle(
+                        color: _primary.withOpacity(0.85),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -112,74 +111,12 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            /// 🔹 Services Grid
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: _cardDecoration(),
-              child: GridView.count(
-                crossAxisCount: 4,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 12,
-                children: [
-                  _serviceTile(
-                    icon: Icons.phone_android,
-                    label: "Mobile",
-                    color: Colors.orange,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.bills),
-                  ),
-                  _serviceTile(
-                    icon: Icons.tv,
-                    label: "DTH",
-                    color: Colors.red,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.flash_on,
-                    label: "Electricity",
-                    color: Colors.amber,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.water_drop,
-                    label: "Water",
-                    color: Colors.blue,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.local_gas_station,
-                    label: "Gas",
-                    color: Colors.deepOrange,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.wifi,
-                    label: "Broadband",
-                    color: Colors.purple,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.credit_card,
-                    label: "Credit Card",
-                    color: Colors.green,
-                    onTap: () {},
-                  ),
-                  _serviceTile(
-                    icon: Icons.more_horiz,
-                    label: "More",
-                    color: Colors.grey,
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.bills),
-                  ),
-                ],
-              ),
-            ),
+            /// ✅ PREMIUM SERVICES BOX (new)
+            _servicesBox(context),
 
             const SizedBox(height: 24),
 
-            /// 🔹 Trust Badge
+            /// 🔹 Trust Badge (outside box)
             Row(
               children: const [
                 Icon(Icons.lock, size: 16, color: Colors.grey),
@@ -202,53 +139,215 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// 🔹 Service Tile
-  Widget _serviceTile({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Column(
-        children: [
-          Container(
-            height: 48,
-            width: 48,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: color, size: 24),
+  /// ✅ PREMIUM SERVICES BOX
+  Widget _servicesBox(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+        ],
+        border: Border.all(
+          color: _primary.withOpacity(0.08),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// top mini header inside box (premium touch)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                colors: [
+                  _primary.withOpacity(0.10),
+                  _lightBlue.withOpacity(0.10),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
+            child: Row(
+              children: const [
+                Icon(Icons.grid_view_rounded, size: 18, color: _primary),
+                SizedBox(width: 8),
+                Text(
+                  "Pay & Recharge",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: _primary,
+                  ),
+                ),
+                Spacer(),
+                Text(
+                  "Secure",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: _primary,
+                  ),
+                ),
+                SizedBox(width: 6),
+                Icon(Icons.verified_rounded, size: 16, color: _primary),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          GridView.count(
+            crossAxisCount: 4,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 12,
+            children: [
+              _premiumServiceTile(
+                icon: Icons.phone_android,
+                label: "Mobile",
+                accent: _secondary,
+                onTap: () => Navigator.pushNamed(context, AppRoutes.bills),
+              ),
+              _premiumServiceTile(
+                icon: Icons.tv,
+                label: "DTH",
+                accent: _lightBlue,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.flash_on,
+                label: "Electricity",
+                accent: _secondary,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.water_drop,
+                label: "Water",
+                accent: _lightBlue,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.local_gas_station,
+                label: "Gas",
+                accent: _secondary,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.wifi,
+                label: "Broadband",
+                accent: _lightBlue,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.credit_card,
+                label: "Credit Card",
+                accent: _secondary,
+                onTap: () {},
+              ),
+              _premiumServiceTile(
+                icon: Icons.more_horiz,
+                label: "More",
+                accent: _primary,
+                onTap: () => Navigator.pushNamed(context, AppRoutes.bills),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          /// bottom hint line inside box
+          Row(
+            children: [
+              Icon(
+                Icons.lock_rounded,
+                size: 14,
+                color: _primary.withOpacity(0.55),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                "Protected by encryption",
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: _primary.withOpacity(0.55),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  /// 🔹 Normal Card Decoration (Material 3)
-  BoxDecoration _cardDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.04),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
+  /// ✅ Premium Service Tile (only your blue theme)
+  Widget _premiumServiceTile({
+    required IconData icon,
+    required String label,
+    required Color accent,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(
+            color: _primary.withOpacity(0.08),
+            width: 1,
+          ),
         ),
-      ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  colors: [
+                    accent.withOpacity(0.18),
+                    accent.withOpacity(0.08),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Icon(icon, color: accent, size: 22),
+            ),
+            const SizedBox(height: 8),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w800,
+                color: _primary,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -257,16 +356,13 @@ class HomeScreen extends StatelessWidget {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(24),
       gradient: const LinearGradient(
-        colors: [
-          Color(0xFF0033A0),
-          Color(0xFF1E5EFF),
-        ],
+        colors: [_primary, _secondary],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.blue.withOpacity(0.25),
+          color: _lightBlue.withOpacity(0.25),
           blurRadius: 20,
           offset: const Offset(0, 10),
         ),

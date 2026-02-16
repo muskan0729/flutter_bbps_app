@@ -94,7 +94,7 @@ class _SupportScreenState extends State<SupportScreen> {
       appBar: AppBar(
         elevation: 0,
         title: const Text(
-          "Support",
+          "Transation Status",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         flexibleSpace: Container(
@@ -283,7 +283,7 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const AppFooter(currentIndex: 4),
+      // bottomNavigationBar: const AppFooter(currentIndex: 3),
     );
   }
 

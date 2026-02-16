@@ -43,7 +43,7 @@ class _ReportScreenState extends State<ReportScreen> {
       appBar: AppBar(
         elevation: 0,
         title: const Text(
-          "Report",
+          "Transation History",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         flexibleSpace: Container(
@@ -69,7 +69,7 @@ class _ReportScreenState extends State<ReportScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppFooter(currentIndex: 4),
+      bottomNavigationBar: const AppFooter(currentIndex: 2),
     );
   }
 

@@ -94,7 +94,7 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const AppFooter(currentIndex: 4),
+      // bottomNavigationBar: const AppFooter(currentIndex: 3),
     );
   }
 

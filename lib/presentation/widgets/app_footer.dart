@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/utils/app_routes.dart';
 
-/// ✅ ONE FILE SOLUTION:
-/// - Same premium design
-/// - Works in 2 modes:
-///   1) Normal route mode (default) -> uses AppRoutes like before
-///   2) Swipe mode -> pass `onTapIndex:` from your PageView wrapper
 class AppFooter extends StatelessWidget {
   final int currentIndex;
-
-  /// ✅ If you pass this, footer will control PageView (swipe system)
-  /// If null, footer will navigate using routes (your old system)
   final ValueChanged<int>? onTapIndex;
 
   const AppFooter({
@@ -24,14 +16,15 @@ class AppFooter extends StatelessWidget {
   void _handleTap(BuildContext context, int index) {
     if (index == currentIndex) return;
 
-    // ✅ Swipe/PageView mode
+    // Swipe mode
     if (onTapIndex != null) {
       onTapIndex!(index);
       return;
     }
 
-    // ✅ Route mode (old behavior)
+    // Route mode
     String route;
+
     switch (index) {
       case 0:
         route = AppRoutes.home;
@@ -40,13 +33,13 @@ class AppFooter extends StatelessWidget {
         route = AppRoutes.bills;
         break;
       case 2:
-        route = AppRoutes.history;
+        route = AppRoutes.report;
         break;
       case 3:
         route = AppRoutes.profile;
         break;
       default:
-        route = AppRoutes.more;
+        return;
     }
 
     Navigator.pushNamedAndRemoveUntil(context, route, (r) => false);
@@ -90,10 +83,9 @@ class AppFooter extends StatelessWidget {
           onTap: (i) => _handleTap(context, i),
           items: [
             _navItem(icon: Icons.home_rounded, label: "Home", i: 0),
-            _navItem(icon: Icons.receipt_long_rounded, label: "Bills", i: 1),
-            _navItem(icon: Icons.history_rounded, label: "History", i: 2),
+            _navItem(icon: Icons.receipt_long_rounded, label: "Services", i: 1),
+            _navItem(icon: Icons.history_rounded, label: "Transation History", i: 2),
             _navItem(icon: Icons.person_rounded, label: "Profile", i: 3),
-            _navItem(icon: Icons.more_horiz_rounded, label: "More", i: 4),
           ],
         ),
       ),
@@ -120,7 +112,9 @@ class AppFooter extends StatelessWidget {
               color: active ? _primary.withOpacity(0.12) : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: active ? _primary.withOpacity(0.18) : Colors.transparent,
+                color: active
+                    ? _primary.withOpacity(0.18)
+                    : Colors.transparent,
               ),
             ),
             child: Icon(

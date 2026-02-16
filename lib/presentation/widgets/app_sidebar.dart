@@ -52,7 +52,7 @@ class AppSidebar extends StatelessWidget {
           ),
           _buildDrawerItem(
             context,
-            title: 'Report',
+            title: 'Transation History',
             icon: Icons.message,
             onTap: () {
               Navigator.pushReplacement(
@@ -74,7 +74,7 @@ class AppSidebar extends StatelessWidget {
           ),
           _buildDrawerItem(
             context,
-            title: 'Support',
+            title: 'Transation Status',
             icon: Icons.transfer_within_a_station,
             onTap: () {
               Navigator.pushReplacement(

@@ -55,8 +55,8 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [_primary, _accent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
             ),
           ),
         ),
@@ -94,7 +94,7 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const AppFooter(currentIndex: 4),
+      // bottomNavigationBar: const AppFooter(currentIndex: 3),
     );
   }
 
@@ -575,3 +575,5 @@ class _HeaderCell extends StatelessWidget {
     );
   }
 }
+
+

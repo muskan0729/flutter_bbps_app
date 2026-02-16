@@ -20,8 +20,8 @@ class BillProcessService {
       }
 
       final response = await http.post(
-        // Uri.parse('${ApiConfig.baseUrl}/bbps/bill-process/json'), //production
-        Uri.parse('${ApiConfig.baseUrl}/bbps/bill-process-test/json'), //testing
+        Uri.parse('${ApiConfig.baseUrl}/bbps/bill-process/json'), //production
+        // Uri.parse('${ApiConfig.baseUrl}/bbps/bill-process-test/json'), //testing
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

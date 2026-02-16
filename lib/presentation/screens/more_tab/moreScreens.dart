@@ -49,7 +49,7 @@ class _MorescreensState extends State<Morescreens> {
           children: [
             _moreGridCard(
               icon: Icons.report,
-              title: "Report",
+              title: "Transation History",
               onTap: () =>
                   Navigator.pushNamed(context, AppRoutes.report),
             ),
@@ -76,7 +76,7 @@ class _MorescreensState extends State<Morescreens> {
       ),
 
       /// Footer
-      bottomNavigationBar: const AppFooter(currentIndex: 4),
+      bottomNavigationBar: const AppFooter(currentIndex: 3),
     );
   }
 

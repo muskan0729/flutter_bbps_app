@@ -10,8 +10,6 @@ class PaymentScreen extends StatefulWidget {
   final BillerInfoModel billerInfo;
   final Map<String, dynamic> billProcessResponse;
   final BillProcessResult billProcessResult;
-
-  /// ✅ customer details captured during bill-process (if any)
   final Map<String, dynamic>? billProcessCustomerDetails;
 
   const PaymentScreen({
@@ -30,117 +28,166 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _paymentKey = GlobalKey<PaymentRequestFormState>();
   BillProcessService billProcessService = BillProcessService();
 
+  static const Color _primary = Color(0xFF0033A0);
+  static const Color _accent = Color(0xFF4B7BEC);
+  static const Color _bg = Color(0xFFF5F7FB);
+
+  static const String _spayLogo = "assets/images/logo_app_icon_white.png";
+  static const String _bharatLogo =
+      "assets/images/BharatConnectLogo_PNG.png";
+
+  bool _isPaying = false;
+
   bool get _requireCustomerDetails {
     return widget.billerInfo.biller.billerFetchRequiremet.toUpperCase() ==
         'NOT_SUPPORTED';
   }
 
-  // void _onProceed() {
-  //   final form = _paymentKey.currentState;
-  //   if (form == null || !form.validate()) return;
-
-  //   final paymentData = form.getData();
-
-  //   final payload = <String, dynamic>{
-  //     'billerId': widget.billerInfo.biller.billerId,
-
-  //     /// required by API
-  //     'remitterName': paymentData['remitterName'],
-  //     'customerMobile': widget.billProcessResult.inputParams['Mobile Number'],
-  //     'customerEmail': '',
-  //     'customerAdhaar': '',
-  //     'customerPan': '',
-
-  //     /// payment fields (FLAT)
-  //     'paymentMode': paymentData['paymentMode'],
-  //     'quickPay': paymentData['quickPay'],
-  //     'splitPay': paymentData['splitPay'],
-  //     'remarks': paymentData['remarks'],
-
-  //     /// required for amount validation
-  //     'amount': paymentData['amount'],
-  //   };
-
-  //   debugPrint('📤 FINAL API PAYLOAD');
-  //   debugPrint(payload.toString());
-  // }
-
-  void _onProceed() {
-    // print(billProcessResponse.toString());
+  Future<void> _onProceed() async {
     final form = _paymentKey.currentState;
-    debugPrint("This is Form Data");
-    // debugPrint(form.getData().toString());
     if (form == null || !form.validate()) return;
 
     final paymentData = form.getData();
-    debugPrint('thuhsujt $paymentData.toString()');
 
-    /// 🔑 Decide customer source
     final Map<String, dynamic> customerData =
         widget.billProcessCustomerDetails ??
-        (paymentData['customerDetails'] as Map<String, dynamic>? ?? {});
+            (paymentData['customerDetails'] as Map<String, dynamic>? ?? {});
 
-    final payload = <String, dynamic>{
+    final payload = {
       'billerId': widget.billerInfo.biller.billerId,
-
-      /// remitter
       'remitterName': paymentData['remitterName'],
-
-      /// customer identity (ALWAYS REQUIRED FOR PAYMENT)
       'customerMobile': customerData['customerMobile'],
       'customerEmail': customerData['customerEmail'],
       'customerPan': customerData['customerPan'],
       'customerAdhaar': customerData['customerAadhar'],
-
-      /// payment
       'paymentMode': paymentData['paymentMode'],
       'quickPay': paymentData['quickPay'],
       'splitPay': paymentData['splitPay'],
       'remarks': paymentData['remarks'],
-
-      /// amount
-      'amount': paymentData['amount'] > 0 ? 0 : paymentData['amount'],
+      // 'amount': paymentData['amount'] >0 ? 0 : paymentData['amount'],
+      'amount': paymentData['amount'],
     };
 
-    /// remove empty values
-    payload.removeWhere((_, v) => v == null || v.toString().isEmpty);
-    // print("BHBHBHBHHHBHBHBHBHBHHHHHBHBHBHBHBHHUHUHUHUHUHUHUHUHUHOSOSOSOSOSMDMDMD");
-    debugPrint('📤 FINAL API PAYLOAD');
-    debugPrint(payload['amount'].toString());
-    debugPrint(payload.toString());
-    // debugPrint(_paymentKey.toString());
+    payload.removeWhere((k, v) => v == null || v.toString().isEmpty);
 
-    debugPrint('API CALL');
+    setState(() => _isPaying = true);
 
-    Future<void> payBill() async {
+    try {
       final res = await billProcessService.processPayment(payload);
-      print(res);
+      if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PaymentSuccessScreen(response: res),
         ),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Payment failed: $e")),
+      );
+    } finally {
+      if (mounted) setState(() => _isPaying = false);
     }
-
-    payBill();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment')),
+      backgroundColor: _bg,
+
+      /// 🔵 PREMIUM APP BAR WITH SPAY LOGO
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text(
+          "Payment",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [_primary, _accent],
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Image.asset(
+              _spayLogo,
+              height: 36,
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.image_not_supported, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!_requireCustomerDetails) ...[
+            /// 🔷 SUMMARY CARD WITH BHARAT CONNECT LOGO
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFE9EEF7)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 14,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.billerInfo.biller.billerName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Review details before payment",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// Bharat Connect Logo
+                  Image.asset(
+                    _bharatLogo,
+                    height: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const SizedBox(),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            if (!_requireCustomerDetails)
               BillProcessResponseView(
                 billProcessResponse: widget.billProcessResponse,
               ),
-              const SizedBox(height: 24),
-            ],
+
+            const SizedBox(height: 16),
 
             PaymentRequestForm(
               key: _paymentKey,
@@ -150,10 +197,48 @@ class _PaymentScreenState extends State<PaymentScreen> {
               isAdhocBiller: widget.billerInfo.biller.billerAdhoc,
             ),
 
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _onProceed,
-              child: const Text('Proceed to Pay'),
+            const SizedBox(height: 20),
+
+            /// 🔷 BEAUTIFUL GRADIENT BUTTON
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  gradient: const LinearGradient(
+                    colors: [_primary, _accent],
+                    begin: Alignment.bottomRight,
+                    end: Alignment.topLeft,
+                  ),
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: _isPaying ? null : _onProceed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: _isPaying
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.lock_rounded),
+                  label: Text(
+                    _isPaying ? "Processing..." : "Proceed to Pay",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

@@ -57,8 +57,8 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [_primary, _accent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
             ),
           ),
         ),

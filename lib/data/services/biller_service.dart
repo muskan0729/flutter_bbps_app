@@ -22,8 +22,8 @@ class BillerService {
       }
 
       final response = await http.get(
-        // Uri.parse('${ApiConfig.baseUrl}/get-billers/$encodedCategory'), //production
-        Uri.parse('${ApiConfig.baseUrl}/get-billers-test/$encodedCategory'), //testing
+        Uri.parse('${ApiConfig.baseUrl}/get-billers/$encodedCategory'), //production
+        // Uri.parse('${ApiConfig.baseUrl}/get-billers-test/$encodedCategory'), //testing
         headers: ApiConfig.authHeaders(token), // ✅ include auth token
       );
 
@@ -49,8 +49,8 @@ class BillerService {
     if (token == null || token.isEmpty) return null;
 
     final response = await http.post(
-      // Uri.parse('${ApiConfig.baseUrl}/bbps/biller-info/json'), //production
-      Uri.parse('${ApiConfig.baseUrl}/bbps/biller-info-test/json'), //testing
+      Uri.parse('${ApiConfig.baseUrl}/bbps/biller-info/json'), //production
+      // Uri.parse('${ApiConfig.baseUrl}/bbps/biller-info-test/json'), //testing
       headers: {'Authorization': 'Bearer $token', 'Content-Type': 'text/plain'},
       body: billerId,
     );

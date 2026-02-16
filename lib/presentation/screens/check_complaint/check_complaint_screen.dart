@@ -55,8 +55,8 @@ class _CheckComplaintScreenState extends State<CheckComplaintScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [_primary, _accent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
             ),
           ),
         ),
@@ -575,3 +575,5 @@ class _HeaderCell extends StatelessWidget {
     );
   }
 }
+
+
